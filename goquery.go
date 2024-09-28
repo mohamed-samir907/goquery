@@ -49,9 +49,9 @@ func (q *Query) Distinct() *Query {
 	return q
 }
 
-func (q *Query) Join(table string, joinBuilder func(b *JoinBuilder)) *Query {
-	return q
-}
+// func (q *Query) Join(table string, joinBuilder func(b *JoinBuilder)) *Query {
+// 	return q
+// }
 
 func (q *Query) Where(column string, op query.Operator, value any) *Query {
 	if q.where == nil {
