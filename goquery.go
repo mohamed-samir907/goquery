@@ -71,7 +71,7 @@ func (q *Query) OrWhere(column string, op query.Operator, value any) *Query {
 	return q
 }
 
-func (q *Query) WhereFunc(f func(query *query.WhereBuilder)) *Query {
+func (q *Query) WhereFunc(f func(builder *query.WhereBuilder)) *Query {
 	if q.where == nil {
 		q.where = query.NewWhereBuilder()
 	}
@@ -80,7 +80,7 @@ func (q *Query) WhereFunc(f func(query *query.WhereBuilder)) *Query {
 	return q
 }
 
-func (q *Query) OrWhereFunc(f func(query *query.WhereBuilder)) *Query {
+func (q *Query) OrWhereFunc(f func(builder *query.WhereBuilder)) *Query {
 	if q.where == nil {
 		q.where = query.NewWhereBuilder()
 	}
@@ -112,7 +112,7 @@ func (q *Query) OrHaving(column string, op query.Operator, value any) *Query {
 	return q
 }
 
-func (q *Query) HavingFunc(f func(query *query.HavingBuilder)) *Query {
+func (q *Query) HavingFunc(f func(builder *query.HavingBuilder)) *Query {
 	if q.having == nil {
 		q.having = query.NewHavingBuilder()
 	}
@@ -121,7 +121,7 @@ func (q *Query) HavingFunc(f func(query *query.HavingBuilder)) *Query {
 	return q
 }
 
-func (q *Query) OrHavingFunc(f func(query *query.HavingBuilder)) *Query {
+func (q *Query) OrHavingFunc(f func(builder *query.HavingBuilder)) *Query {
 	if q.having == nil {
 		q.having = query.NewHavingBuilder()
 	}
