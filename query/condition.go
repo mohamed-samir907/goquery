@@ -43,26 +43,28 @@ type ConditionGroup struct {
 	SubGroups  []ConditionGroup
 }
 
-func NewConditionGroup() *ConditionGroup {
-	return &ConditionGroup{
-		Type: TypeInit,
+func NewConditionGroup() ConditionGroup {
+	return ConditionGroup{
+		Type:       TypeInit,
+		Conditions: make([]Condition, 0, 2),
+		SubGroups:  make([]ConditionGroup, 0, 2),
 	}
 }
 
 func (cg *ConditionGroup) AddCondition(column string, op Operator, value any, _type Type) *ConditionGroup {
-	cg.Conditions = append(cg.Conditions, Condition{
+	condition := Condition{
 		Column:   column,
 		Operator: op,
 		Value:    value,
 		Type:     _type,
-	})
+	}
+	cg.Conditions = append(cg.Conditions, condition)
 	return cg
 }
 
-func (cg *ConditionGroup) AddSubGroup(_type Type) *ConditionGroup {
-	newGroup := ConditionGroup{Type: _type}
-	cg.SubGroups = append(cg.SubGroups, newGroup)
-	return &cg.SubGroups[len(cg.SubGroups)-1]
+func (cg *ConditionGroup) AddSubGroup(_type Type) ConditionGroup {
+	cg.SubGroups = append(cg.SubGroups, ConditionGroup{Type: _type})
+	return cg.SubGroups[len(cg.SubGroups)-1]
 }
 
 func (cg *ConditionGroup) Build() (string, []any) {
@@ -70,8 +72,8 @@ func (cg *ConditionGroup) Build() (string, []any) {
 }
 
 func (cb *ConditionGroup) buildGroup(group ConditionGroup, root bool) (string, []any) {
-	var conditions []string
-	var args []any
+	conditions := make([]string, 0, len(group.Conditions))
+	args := make([]any, 0, len(group.Conditions))
 
 	for _, cond := range group.Conditions {
 		condition, arg := cb.buildCondition(cond)
@@ -107,11 +109,13 @@ func (cb *ConditionGroup) buildGroup(group ConditionGroup, root bool) (string, [
 		return "", nil
 	}
 
+	// Preallocate memory for the final string
+	joinedConditions := strings.Join(conditions, " ")
 	if root {
-		return strings.Join(conditions, " "), args
+		return joinedConditions, args
 	}
 
-	return "(" + strings.Join(conditions, " ") + ")", args
+	return "(" + joinedConditions + ")", args
 }
 
 func (cb *ConditionGroup) buildCondition(cond Condition) (string, []any) {

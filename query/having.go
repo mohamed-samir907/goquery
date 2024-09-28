@@ -1,11 +1,11 @@
 package query
 
 type HavingBuilder struct {
-	g *ConditionGroup
+	g ConditionGroup
 }
 
-func NewHavingBuilder() *HavingBuilder {
-	return &HavingBuilder{
+func NewHavingBuilder() HavingBuilder {
+	return HavingBuilder{
 		g: NewConditionGroup(),
 	}
 }
@@ -30,8 +30,8 @@ func (b *HavingBuilder) OrHaving(column string, op Operator, value any) *HavingB
 	return b
 }
 
-func (b *HavingBuilder) HavingFunc(f func(query *HavingBuilder)) *HavingBuilder {
-	var newBuilder *HavingBuilder
+func (b *HavingBuilder) HavingFunc(f func(query HavingBuilder)) *HavingBuilder {
+	var newBuilder HavingBuilder
 
 	if len(b.g.SubGroups) == 0 && len(b.g.Conditions) == 0 {
 		newBuilder = convertGroupToHavingBuilder(
@@ -48,8 +48,8 @@ func (b *HavingBuilder) HavingFunc(f func(query *HavingBuilder)) *HavingBuilder 
 	return b
 }
 
-func (b *HavingBuilder) OrHavingFunc(f func(query *HavingBuilder)) *HavingBuilder {
-	var newBuilder *HavingBuilder
+func (b *HavingBuilder) OrHavingFunc(f func(query HavingBuilder)) *HavingBuilder {
+	var newBuilder HavingBuilder
 
 	if len(b.g.SubGroups) == 0 && len(b.g.Conditions) == 0 {
 		newBuilder = convertGroupToHavingBuilder(
@@ -76,8 +76,8 @@ func (b *HavingBuilder) Build() (string, []any) {
 	return "HAVING " + q, arg
 }
 
-func convertGroupToHavingBuilder(cg *ConditionGroup) *HavingBuilder {
-	return &HavingBuilder{
+func convertGroupToHavingBuilder(cg ConditionGroup) HavingBuilder {
+	return HavingBuilder{
 		g: cg,
 	}
 }

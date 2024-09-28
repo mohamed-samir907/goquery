@@ -1,6 +1,8 @@
 package drivers
 
-import "github.com/mohamed-samir907/goquery/query"
+import (
+	"github.com/mohamed-samir907/goquery/query"
+)
 
 type Driver interface {
 	// Get executes the SELECT query and returns the result as a slice of maps.
@@ -75,11 +77,10 @@ func prepareValuesAndScanArgs(columns []string) ([]any, []any) {
 //	// rowMap will be:
 //	// map[id:1 name:John Doe email:john.doe@example.com]
 func convertRowToMap(columns []string, values []any) map[string]any {
-	rowMap := make(map[string]any)
+	rowMap := make(map[string]any, len(columns))
 	for i, col := range columns {
 		val := values[i]
-		b, ok := val.([]byte)
-		if ok {
+		if b, ok := val.([]byte); ok {
 			rowMap[col] = string(b)
 		} else {
 			rowMap[col] = val

@@ -1,11 +1,11 @@
 package query
 
 type WhereBuilder struct {
-	g *ConditionGroup
+	g ConditionGroup
 }
 
-func NewWhereBuilder() *WhereBuilder {
-	return &WhereBuilder{
+func NewWhereBuilder() WhereBuilder {
+	return WhereBuilder{
 		g: NewConditionGroup(),
 	}
 }
@@ -30,8 +30,8 @@ func (b *WhereBuilder) OrWhere(column string, op Operator, value any) *WhereBuil
 	return b
 }
 
-func (b *WhereBuilder) WhereFunc(f func(query *WhereBuilder)) *WhereBuilder {
-	var newBuilder *WhereBuilder
+func (b *WhereBuilder) WhereFunc(f func(query WhereBuilder)) *WhereBuilder {
+	var newBuilder WhereBuilder
 
 	if len(b.g.SubGroups) == 0 && len(b.g.Conditions) == 0 {
 		newBuilder = convertGroupToWhereBuilder(
@@ -48,8 +48,8 @@ func (b *WhereBuilder) WhereFunc(f func(query *WhereBuilder)) *WhereBuilder {
 	return b
 }
 
-func (b *WhereBuilder) OrWhereFunc(f func(query *WhereBuilder)) *WhereBuilder {
-	var newBuilder *WhereBuilder
+func (b *WhereBuilder) OrWhereFunc(f func(query WhereBuilder)) *WhereBuilder {
+	var newBuilder WhereBuilder
 
 	if len(b.g.SubGroups) == 0 && len(b.g.Conditions) == 0 {
 		newBuilder = convertGroupToWhereBuilder(
@@ -76,8 +76,8 @@ func (b *WhereBuilder) Build() (string, []any) {
 	return "WHERE " + q, arg
 }
 
-func convertGroupToWhereBuilder(cg *ConditionGroup) *WhereBuilder {
-	return &WhereBuilder{
+func convertGroupToWhereBuilder(cg ConditionGroup) WhereBuilder {
+	return WhereBuilder{
 		g: cg,
 	}
 }

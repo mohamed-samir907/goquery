@@ -22,9 +22,9 @@ type Query struct {
 	table    string
 	distinct bool
 	columns  []string
-	where    *query.WhereBuilder
+	where    query.WhereBuilder
 	groupBy  []string
-	having   *query.HavingBuilder
+	having   query.HavingBuilder
 	orderBy  []string
 	limit    int
 	offset   *int
@@ -36,6 +36,10 @@ func (d *Database) Table(table string) *Query {
 		table:    table,
 		distinct: false,
 		columns:  []string{"*"},
+		groupBy:  make([]string, 0, 5),
+		orderBy:  make([]string, 0, 2),
+		where:    query.NewWhereBuilder(),
+		having:   query.NewHavingBuilder(),
 	}
 }
 
@@ -54,37 +58,21 @@ func (q *Query) Distinct() *Query {
 // }
 
 func (q *Query) Where(column string, op query.Operator, value any) *Query {
-	if q.where == nil {
-		q.where = query.NewWhereBuilder()
-	}
-
 	q.where.Where(column, op, value)
 	return q
 }
 
 func (q *Query) OrWhere(column string, op query.Operator, value any) *Query {
-	if q.where == nil {
-		q.where = query.NewWhereBuilder()
-	}
-
 	q.where.OrWhere(column, op, value)
 	return q
 }
 
-func (q *Query) WhereFunc(f func(builder *query.WhereBuilder)) *Query {
-	if q.where == nil {
-		q.where = query.NewWhereBuilder()
-	}
-
+func (q *Query) WhereFunc(f func(builder query.WhereBuilder)) *Query {
 	q.where.WhereFunc(f)
 	return q
 }
 
-func (q *Query) OrWhereFunc(f func(builder *query.WhereBuilder)) *Query {
-	if q.where == nil {
-		q.where = query.NewWhereBuilder()
-	}
-
+func (q *Query) OrWhereFunc(f func(builder query.WhereBuilder)) *Query {
 	q.where.OrWhereFunc(f)
 	return q
 }
@@ -95,37 +83,21 @@ func (q *Query) GroupBy(columns ...string) *Query {
 }
 
 func (q *Query) Having(column string, op query.Operator, value any) *Query {
-	if q.having == nil {
-		q.having = query.NewHavingBuilder()
-	}
-
 	q.having.Having(column, op, value)
 	return q
 }
 
 func (q *Query) OrHaving(column string, op query.Operator, value any) *Query {
-	if q.having == nil {
-		q.having = query.NewHavingBuilder()
-	}
-
 	q.having.OrHaving(column, op, value)
 	return q
 }
 
-func (q *Query) HavingFunc(f func(builder *query.HavingBuilder)) *Query {
-	if q.having == nil {
-		q.having = query.NewHavingBuilder()
-	}
-
+func (q *Query) HavingFunc(f func(builder query.HavingBuilder)) *Query {
 	q.having.HavingFunc(f)
 	return q
 }
 
-func (q *Query) OrHavingFunc(f func(builder *query.HavingBuilder)) *Query {
-	if q.having == nil {
-		q.having = query.NewHavingBuilder()
-	}
-
+func (q *Query) OrHavingFunc(f func(builder query.HavingBuilder)) *Query {
 	q.having.OrHavingFunc(f)
 	return q
 }

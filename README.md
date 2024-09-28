@@ -1,3 +1,5 @@
+![GoQuery Image](goquery.png)
+
 ## goquery
 
 **GoQuery** is a Golang query builder library inspired by Laravel's Query Builder, aims to support multiple drivers such as MySQL, PostgreSQL, and SQLite. It aims to simplify building SQL queries in Go without compromising flexibility and performance.
@@ -43,7 +45,7 @@ go get github.com/mohamed-samir907/goquery
 
 ### Usage
 
-You can find the full API docs for the packahge [here](./docs.md)
+You can find the full API docs for the packahge [here](./docs/docs.md)
 
 #### Basic Queries
 

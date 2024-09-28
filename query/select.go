@@ -6,72 +6,72 @@ type SelectQuery struct {
 	Table    string
 	Distinct bool
 	Columns  []string
-	Where    *WhereBuilder
+	Where    WhereBuilder
 	GroupBy  []string
-	Having   *HavingBuilder
+	Having   HavingBuilder
 	OrderBy  []string
 	Limit    int
 	Offset   *int
+	builder  strings.Builder
 }
 
 func (q *SelectQuery) Build() (string, []any) {
-	var b strings.Builder
-	args := []any{}
+	q.builder.Grow(256)
 
-	b.WriteString("SELECT ")
-	b.WriteString(strings.Join(q.Columns, ", "))
-	b.WriteString(" FROM ")
-	b.WriteString(q.Table)
-	b.WriteString(" ")
+	args := make([]any, 0, 10)
+
+	q.builder.WriteString("SELECT ")
+	q.builder.WriteString(strings.Join(q.Columns, ", "))
+	q.builder.WriteString(" FROM ")
+	q.builder.WriteString(q.Table)
+	q.builder.WriteString(" ")
 
 	// TODO: build join here
 
 	// add WHERE to the query
-	if q.Where != nil {
-		cond, arg := q.Where.Build()
-
-		b.WriteString(cond)
-		b.WriteString(" ")
+	cond, arg := q.Where.Build()
+	if cond != "" {
+		q.builder.WriteString(cond)
+		q.builder.WriteString(" ")
 
 		args = append(args, arg...)
 	}
 
 	// add GROUP BY to the query
 	if len(q.GroupBy) > 0 {
-		b.WriteString("GROUP BY ")
-		b.WriteString(strings.Join(q.GroupBy, ", "))
-		b.WriteString(" ")
+		q.builder.WriteString("GROUP BY ")
+		q.builder.WriteString(strings.Join(q.GroupBy, ", "))
+		q.builder.WriteString(" ")
 	}
 
 	// add HAVING to the query
-	if q.Having != nil {
-		cond, arg := q.Having.Build()
-
-		b.WriteString(cond)
-		b.WriteString(" ")
+	cond, arg = q.Having.Build()
+	if cond != "" {
+		q.builder.WriteString(cond)
+		q.builder.WriteString(" ")
 
 		args = append(args, arg...)
 	}
 
 	// add ORDER BY to the query
 	if len(q.OrderBy) > 0 {
-		b.WriteString("ORDER BY ")
-		b.WriteString(strings.Join(q.OrderBy, ", "))
-		b.WriteString(" ")
+		q.builder.WriteString("ORDER BY ")
+		q.builder.WriteString(strings.Join(q.OrderBy, ", "))
+		q.builder.WriteString(" ")
 	}
 
 	// add LIMIT to the query
 	if q.Limit > 0 {
-		b.WriteString("LIMIT ?")
-		b.WriteString(" ")
+		q.builder.WriteString("LIMIT ?")
+		q.builder.WriteString(" ")
 		args = append(args, q.Limit)
 	}
 
 	// add OFFSET to the query
 	if q.Offset != nil {
-		b.WriteString("OFFSET ?")
+		q.builder.WriteString("OFFSET ?")
 		args = append(args, *q.Offset)
 	}
 
-	return b.String(), args
+	return q.builder.String(), args
 }

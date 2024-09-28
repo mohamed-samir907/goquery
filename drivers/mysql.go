@@ -35,6 +35,11 @@ func (d *MySQL) Get(q query.SelectQuery) ([]map[string]any, error) {
 	values, scanArgs := prepareValuesAndScanArgs(columns)
 
 	var results []map[string]any
+	if q.Limit > 0 {
+		// this will preallocate memory with the given limit to avoid resizing
+		results = make([]map[string]any, 0, q.Limit)
+	}
+
 	for rows.Next() {
 		// scan args represent a pointers to each value of the values slice
 		// which means the values slice will be filled by a db row after scan.
